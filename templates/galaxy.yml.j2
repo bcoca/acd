@@ -1,0 +1,17 @@
+namespace: community
+name: distribution
+version: {{version}}
+readme: README.md
+authors:
+  - Ansible (https://github.com/ansible)
+description: Ansible Community Distribution
+license_file: COPYING
+tags: ansible, community
+dependencies:
+{% for dep in deps.splitlines() %}
+  {% if not dep.startswith('_')%}{{dep}}{%endif%}
+{% endfor %}
+repository: https://github.com/ansible-collections/acd
+documentation: https://github.com/ansible-collections/acd/docs/
+homepage: https://github.com/ansible-collections/acd/README.md
+issues: https://github.com/ansible-collections/acd/

@@ -1,0 +1,29 @@
+#!/usr/bin/env ansible-playbook
+- hosts: localhost
+  gather_facts: false
+  vars_prompt:
+    - name: branch
+      default: main
+    - name: version
+      default: '2.10'
+    - name: builddir
+      default: './build'
+  vars:
+      reference: 'https://raw.githubusercontent.com/ansible-community/ansible-build-data/{{branch}}/{{version}}/acd-{{version}}.build'
+  tasks:
+    - name: setup build dir
+      file: path={{builddir}} state=directory
+
+    - set_fact: deps={{lookup('url', reference)}}
+
+    - name: generate galaxy.yml
+      template: src=galaxy.yml.j2 dest={{builddir}}/galaxy.yml
+
+    - name: build collection
+      shell: ansible-galaxy collection build
+      args:
+        chdir: '{{builddir}}'
+
+    - name: get tarball name
+      find: paths={{builddir}} patterns='*tgz'
+      register: tarballs
