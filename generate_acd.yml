@@ -9,7 +9,7 @@
     - name: builddir
       default: './build'
   vars:
-      reference: 'https://raw.githubusercontent.com/ansible-community/ansible-build-data/{{branch}}/{{version}}/acd-{{version}}.build'
+      reference: 'https://raw.githubusercontent.com/ansible-community/ansible-build-data/{{branch}}/{{version}}/ansible-{{version}}.build'
   tasks:
     - name: setup build dir
       file: path={{builddir}} state=directory
