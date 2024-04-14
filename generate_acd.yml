@@ -4,17 +4,21 @@
   vars_prompt:
     - name: branch
       default: main
+      private: no
     - name: version
       default: '2.10'
+      private: no
     - name: builddir
       default: './build'
+      private: no
   vars:
-      reference: 'https://raw.githubusercontent.com/ansible-community/ansible-build-data/{{branch}}/{{version}}/ansible-{{version}}.build'
+      major: "{{ (version | split('.'))[0] }}"
+      reference: 'https://raw.githubusercontent.com/ansible-community/ansible-build-data/{{branch}}/{{major}}/ansible-{{version}}.deps'
   tasks:
     - name: setup build dir
       file: path={{builddir}} state=directory
 
-    - set_fact: deps={{lookup('url', reference)}}
+    - set_fact: deps="{{lookup('url', reference, split_lines=false)}}"
 
     - name: generate galaxy.yml
       template: src=galaxy.yml.j2 dest={{builddir}}/galaxy.yml
