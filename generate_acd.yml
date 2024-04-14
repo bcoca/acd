@@ -15,6 +15,26 @@
       major: "{{ (version | split('.'))[0] }}"
       reference: 'https://raw.githubusercontent.com/ansible-community/ansible-build-data/{{branch}}/{{major}}/ansible-{{version}}.deps'
   tasks:
+    - name: deal with dirty dirs
+      when: builddir is exists and builddir is directory
+      block:
+        - pause:
+            prompt: 'Build dir ({{builddir}}) already exists, should we wipe, continue or abort?'
+          register: cleanup
+          name: Previous build detected
+
+        - file: path={{builddir}} state=absent
+          when: "cleanup.user_input == 'wipe'"
+          name: wipe previous build
+
+        - fail: msg="Aborting as per user request"
+          when: "cleanup.user_input == 'abort'"
+          name: abort!
+
+        - fail: msg="Aborting since user input was confusing:{{cleanup.user_input}}"
+          when: cleanup.user_input not in ('wipe', 'continue')
+          name: abort anyways!
+
     - name: setup build dir
       file: path={{builddir}} state=directory
 
