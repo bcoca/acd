@@ -6,7 +6,7 @@
       default: main
       private: no
     - name: version
-      default: '9.0.0'
+      default: '11.3.0'
       private: no
     - name: builddir
       default: './build'
